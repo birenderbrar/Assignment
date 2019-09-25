@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Coding Assignment</title>
+		<link rel="stylesheet" type="text/css" href="./css/main.css">
+	</head>
+	<body>
+		<div class="image">
+			<h1>Accessable Image</h1>
+			<img src="./images/dog.jpg" alt="Dog">
+		</div>
+		<br>
+		<div class="form1">
+			<form name="myForm">
+				Request Data: <input type="text" name="fname">
+				<input type="button" value="Submit" onclick="sendData()">
+			</form>
+		</div>
+		<br>
+		<div id='content'>
+			<table border="1" align="center">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Key</th>
+						<th>Data</th>
+					</tr>
+				</thead>
+				<tbody id="append">
+				</tbody>
+			</table>
+		</div>
+		<script>
+		function sendData() {
+		// HTTP request object for first asyn call.
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", "http://httpbin.org/delay/1", true);
+		xhr.onload = function(e) {
+		if (xhr.readyState === 4) {
+		if (xhr.status === 200) {
+		// GET request to /delay/1 end-point is completed successfully so making
+		// another HTTP request to
+		xhr_base64 = new XMLHttpRequest();
+		xhr_base64.open("GET", "http://localhost/test2/getdata.php", true);
+		xhr_base64.onload = function(e) {
+		console.log(e);
+		if (xhr_base64.readyState === 4 && xhr_base64.status === 200) {
+		// As requested in exercise loading the content into a table.
+			var data = JSON.parse(xhr_base64.responseText);
+			if (data.length) {
+				var html = "";
+				data.forEach(function(value, key){
+					html += "<tr><td>"+value.ID+"</td><td>"+value.Value_Key+"</td><td>"+value.Value_Data+"</td></tr>";
+				});
+				document.getElementById("append").innerHTML = html;
+			}else{
+				alert("No record found!");
+			}
+			}
+			};
+			xhr_base64.send(null); //Initiating the request.
+			} else {
+			// Something went wrong with the request.
+			// Logging error text.
+			console.error(xhr.statusText);
+			}
+			}
+			};
+			xhr.onerror = function(e) {
+			console.error(xhr.statusText);
+			};
+			// Sending null to httpbin.org/delay/5 with GET method with xhr object.
+			xhr.send(null);
+			}
+			</script>
+		</body>
+	</html>
